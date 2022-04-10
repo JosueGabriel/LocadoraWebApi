@@ -10,60 +10,57 @@ namespace LocacaoWebApi.Controllers
     {
         private readonly DataContext _context;
 
-        public LocacaoController(DataContext context)
-        {
-            _context = context;
-        }
+        public LocacaoController(DataContext context) => _context = context;
 
         [HttpGet]
-        public async Task<ActionResult<List<Locacao>>> Get()
+        public async Task<ActionResult<IEnumerable<Locacao>>> GetLocacao()
         {
-            return Ok(await _context.Locacaos.ToListAsync());
+            return Ok(await _context.Locacaos.Include(c => c.Cliente).Include(f => f.Filme).ToListAsync());
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<List<Locacao>>> Get(int id)
+        public async Task<ActionResult<Locacao>> GetLocacao(int id)
         {
-            var locacao = await _context.Locacaos.FindAsync(id);
-            if (locacao == null)
-                return BadRequest("Não encontramos cliente com este Id...");
-            return Ok(locacao);
+            var locacao = await _context.Locacaos.Include(c => c.Cliente).Include(f => f.Filme).FirstOrDefaultAsync(i => i.Id == id);
+            return locacao == null ? NotFound() : Ok(locacao);
         }
 
         [HttpPost]
-        public async Task<ActionResult<List<Locacao>>> AddLocacao(Locacao locacao)
+        public async Task<ActionResult<Locacao>> PostLocacao(Locacao locacao)
         {
             _context.Locacaos.Add(locacao);
             await _context.SaveChangesAsync();
-            return Ok(await _context.Locacaos.ToListAsync());
+            return CreatedAtAction("GetLocacao", new { id = locacao.Id }, locacao);
         }
 
         [HttpPut]
-        public async Task<ActionResult<List<Locacao>>> UpdateLocacao(Locacao request)
+        public async Task<ActionResult<Locacao>> PutLocacao(Locacao putLocacao)
         {
-            var dbLocacao = await _context.Locacaos.FindAsync(request.Id);
-            if (dbLocacao == null)
-                return BadRequest("Não encontramos cliente com este Id...");
+            var locacao = await _context.Locacaos.FindAsync(putLocacao.Id);
+            if (locacao == null)
+                return NotFound();
 
-            dbLocacao.Id_Cliente = request.Id_Cliente;
-            dbLocacao.Id_Filme = request.Id_Filme;
-            dbLocacao.DataLocacao = request.DataLocacao; 
-            dbLocacao.DataDevolucao = request.DataDevolucao;
+            locacao.ClienteId = putLocacao.ClienteId;
+            locacao.FilmeId = putLocacao.ClienteId;
+            locacao.DataLocacao = putLocacao.DataLocacao;
+            locacao.DataDevolucao = putLocacao.DataDevolucao;
 
             await _context.SaveChangesAsync();
-            return Ok(await _context.Locacaos.ToListAsync());
+            return CreatedAtAction("GetLocacao", new { id = locacao.Id }, locacao);
         }
 
         [HttpDelete("{id}")]
-        public async Task<ActionResult<List<Locacao>>> Delete(int id)
+        public async Task<ActionResult<List<Locacao>>> DeleteLocacao(int id)
         {
-            var dbLocacao = await _context.Locacaos.FindAsync(id);
-            if (dbLocacao == null)
-                return BadRequest("Não encontramos cliente com este Id...");
+            var locacao = await _context.Locacaos.FindAsync(id);
+            if (locacao == null)
+                return NotFound();
 
-            _context.Locacaos.Remove(dbLocacao);
+            _context.Locacaos.Remove(locacao);
             await _context.SaveChangesAsync();
+
             return Ok(await _context.Locacaos.ToListAsync());
         }
+
     }
 }

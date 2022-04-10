@@ -8,15 +8,13 @@ namespace LocacaoWebApi.Models
     {
         [Key]
         public int Id { get; set; }
-
-        [MaxLength(100, ErrorMessage = "")]
-        public string Titulo { get; set; } = string.Empty;
-
+        [Required(ErrorMessage = "O campo {0} é obrigatório")]
+        [StringLength(100, ErrorMessage = "O campo {0} precisa ter entre {2} e {1} caracteres", MinimumLength = 1)]
+        public string? Titulo { get; set; }
         public int ClassificacaoIndicativa { get; set; }
-
         public bool Lancamento { get; set; }
 
-        // prop nav
-        // public ICollection<Locacao> Locacaos { get; set; } = null!;
+        [InverseProperty(nameof(Locacao.Filme))]
+        public virtual ICollection<Locacao>? Locacaos { get; set; }
     }
 }

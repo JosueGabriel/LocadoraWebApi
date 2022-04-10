@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using LocacaoWebApi.Data;
+using System.Linq;
 using LocacaoWebApi.Models;
 
 namespace LocacaoWebApi.Controllers
@@ -14,52 +15,72 @@ namespace LocacaoWebApi.Controllers
         public ClienteController(DataContext context) => _context = context;
 
         [HttpGet]
-        public async Task<ActionResult<List<Cliente>>> Get()
+        public async Task<ActionResult<IEnumerable<Cliente>>> GetCliente()
         {
-            return Ok(await _context.Clientes.ToListAsync());
+            return Ok(await _context.Clientes.Include(l => l.Locacaos).ThenInclude(f => f.Filme).ToListAsync());
         }
-        
+
         [HttpGet("{id}")]
-        public async Task<ActionResult<List<Cliente>>> GetById(int id)
+        public async Task<ActionResult<Cliente>> GetCliente(int id)
         {
-            var cliente = await _context.Clientes.FindAsync(id);
+            var cliente = await _context.Clientes.Include(l => l.Locacaos).ThenInclude(f => f.Filme).FirstOrDefaultAsync(i => i.Id == id);
             return cliente == null ? NotFound() : Ok(cliente);
         }
-        
+
         [HttpPost]
-        public async Task<ActionResult<List<Cliente>>> AddCliente(Cliente cliente)
+        public async Task<ActionResult<Cliente>> PostCliente(Cliente cliente)
         {
             _context.Clientes.Add(cliente);
             await _context.SaveChangesAsync();
-            return Ok(await _context.Clientes.ToListAsync());
+            return CreatedAtAction("GetCliente", new { id = cliente.Id }, cliente);
         }
-        
-        [HttpPut]
-        public async Task<ActionResult<List<Cliente>>> UpdateCliente(Cliente request)
-        {
-            var dbCliente = await _context.Clientes.FindAsync(request.Id);
-            if (dbCliente == null)
-                return BadRequest("Não encontramos cliente com este Id...");
 
-            dbCliente.Nome = request.Nome;
-            dbCliente.CPF = request.CPF;
-            dbCliente.DataNascimento = request.DataNascimento;
+        [HttpPut]
+        public async Task<ActionResult<Cliente>> PutCliente(Cliente putCliente)
+        {
+            var cliente = await _context.Clientes.FindAsync(putCliente.Id);
+            if (cliente == null)
+                return NotFound();
+
+            cliente.Nome = putCliente.Nome;
+            cliente.DataNascimento = putCliente.DataNascimento;
+            cliente.CPF = putCliente.CPF;
 
             await _context.SaveChangesAsync();
-            return Ok(await _context.Clientes.ToListAsync());
+            return CreatedAtAction("GetCliente", new { id = cliente.Id }, cliente);
         }
         
         [HttpDelete("{id}")]
-        public async Task<ActionResult<List<Cliente>>> Delete(int id)
+        public async Task<ActionResult<List<Cliente>>> DeleteCliente(int id)
         {
-            var dbCliente = await _context.Clientes.FindAsync(id);
-            if (dbCliente == null)
-                return BadRequest("Não encontramos cliente com este Id...");
+            var cliente = await _context.Clientes.FindAsync(id);
+            if (cliente == null)
+                return NotFound();
 
-            _context.Clientes.Remove(dbCliente);
+            _context.Clientes.Remove(cliente);
             await _context.SaveChangesAsync();
+
             return Ok(await _context.Clientes.ToListAsync());
         }
-        
+
+        [HttpGet] 
+        [Route("ClientesComAtraso")]
+        public async Task<ActionResult<List<Cliente>>> GetClientesComAtraso() 
+        {
+            var clientes = await _context.Locacaos
+                .Where(x => x.DataDevolucao.CompareTo(x.Filme.Lancamento ? x.DataLocacao.AddDays(2) : x.DataLocacao.AddDays(3)) > 0)
+                .Select(x => x.Cliente).ToListAsync();
+            return clientes == null ? NotFound() : Ok(clientes);
+        }
+
+        [HttpGet]
+        [Route("ClientesMaisAlugou")]
+        public async Task<ActionResult<List<Cliente>>> GetClientesMaisAlugou(int colocacao)
+        {
+            var clientes = await _context.Clientes.OrderBy(x => x.Locacaos.Count).ToListAsync();
+
+            return clientes.ElementAtOrDefault(colocacao) == null ? NotFound() : 
+                CreatedAtAction("GetCliente", new { id = clientes.ElementAtOrDefault(colocacao).Id }, clientes.ElementAtOrDefault(colocacao));
+        }
     }
 }
