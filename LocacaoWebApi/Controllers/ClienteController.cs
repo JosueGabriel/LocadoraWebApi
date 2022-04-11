@@ -17,13 +17,13 @@ namespace LocadoraWebApi.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Cliente>>> GetCliente()
         {
-            return Ok(await _context.Clientes.Include(l => l.Locacaos).ThenInclude(f => f.Filme).ToListAsync());
+            return Ok(await _context.Clientes.ToListAsync());//.ThenInclude(f => f.Filme).ToListAsync());
         }
 
         [HttpGet("{id}")]
         public async Task<ActionResult<Cliente>> GetCliente(int id)
         {
-            var cliente = await _context.Clientes.Include(l => l.Locacaos).ThenInclude(f => f.Filme).FirstOrDefaultAsync(i => i.Id == id);
+            var cliente = await _context.Clientes.FirstOrDefaultAsync(i => i.Id == id);
             return cliente == null ? NotFound() : Ok(cliente);
         }
 
@@ -62,25 +62,25 @@ namespace LocadoraWebApi.Controllers
 
             return Ok(await _context.Clientes.ToListAsync());
         }
-
+        
         [HttpGet] 
         [Route("ClientesComAtraso")]
         public async Task<ActionResult<List<Cliente>>> GetClientesComAtraso() 
         {
             var clientes = await _context.Locacaos
                 .Where(x => x.DataDevolucao.CompareTo(x.Filme.Lancamento ? x.DataLocacao.AddDays(2) : x.DataLocacao.AddDays(3)) > 0)
-                .Select(x => x.Cliente).ToListAsync();
+                .Select(x => x.Cliente).Distinct().ToListAsync();
             return clientes == null ? NotFound() : Ok(clientes);
         }
-
+        /*
         [HttpGet]
         [Route("SegundoClienteMaisAlugou")]
         public async Task<ActionResult<List<Cliente>>> GetSegundoClienteMaisAlugou()
         {
-            var clientes = await _context.Clientes.OrderBy(x => x.Locacaos.Count).ToListAsync();
-
+            var clientes = await _context.Locacaos.Select(x => x.Cliente).ToListAsync();
+            //var clientes = await _context.Locacaos.ToList().OrderByDescending(x => x.ClienteId.Count).ToListAsync();
             return clientes.ElementAtOrDefault(2) == null ? NotFound() : 
                 CreatedAtAction("GetCliente", new { id = clientes.ElementAtOrDefault(2).Id }, clientes.ElementAtOrDefault(2));
-        }
+        }*/
     }
 }

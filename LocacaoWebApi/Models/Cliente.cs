@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
+using System.Text.Json.Serialization;
 
 namespace LocadoraWebApi.Models
 {
@@ -18,7 +19,8 @@ namespace LocadoraWebApi.Models
         public DateTime DataNascimento { get; set; }
 
         [InverseProperty(nameof(Locacao.Cliente))]
-        public virtual ICollection<Locacao>? Locacaos { get; set; }
+        [JsonIgnore]
+        public virtual List<Locacao>? Locacaos { get; set; }
 
     }
 }

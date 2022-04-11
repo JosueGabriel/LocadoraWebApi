@@ -16,13 +16,13 @@ namespace LocadoraWebApi.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Locacao>>> GetLocacao()
         {
-            return Ok(await _context.Locacaos.Include(c => c.Cliente).Include(f => f.Filme).ToListAsync());
+            return Ok(await _context.Locacaos.ToListAsync());
         }
 
         [HttpGet("{id}")]
         public async Task<ActionResult<Locacao>> GetLocacao(int id)
         {
-            var locacao = await _context.Locacaos.Include(c => c.Cliente).Include(f => f.Filme).FirstOrDefaultAsync(i => i.Id == id);
+            var locacao = await _context.Locacaos.FirstOrDefaultAsync(i => i.Id == id);
             return locacao == null ? NotFound() : Ok(locacao);
         }
 

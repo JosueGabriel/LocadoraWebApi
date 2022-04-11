@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace LocadoraWebApi.Models
 {
@@ -15,6 +16,7 @@ namespace LocadoraWebApi.Models
         public bool Lancamento { get; set; }
 
         [InverseProperty(nameof(Locacao.Filme))]
-        public virtual ICollection<Locacao>? Locacaos { get; set; }
+        [JsonIgnore]
+        public virtual List<Locacao>? Locacaos { get; set; }
     }
 }

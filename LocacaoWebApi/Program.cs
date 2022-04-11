@@ -24,7 +24,7 @@ builder.Services.AddSwaggerGen(c =>
     c.SwaggerDoc("v1", new OpenApiInfo 
     { 
         Title = "LocadoraWebApi",
-        Description = "Exercício do processo seletivo da E-Auditoria",
+        Description = "Api em c#",
         Contact = new OpenApiContact 
         { 
             Name = "Josué Gabriel dos Santos",
@@ -43,6 +43,13 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseCors( options =>
+{
+    options.WithOrigins("http://localhost:3000");
+    options.AllowAnyMethod();
+    options.AllowAnyHeader();
+});
 
 app.UseHttpsRedirection();
 

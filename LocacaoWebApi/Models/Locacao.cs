@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace LocadoraWebApi.Models
 {
@@ -16,9 +17,11 @@ namespace LocadoraWebApi.Models
 
         [ForeignKey(nameof(FilmeId))]
         [InverseProperty("Locacaos")]
+        [JsonIgnore]
         public virtual Filme? Filme { get; set; }
         [ForeignKey(nameof(ClienteId))]
         [InverseProperty("Locacaos")]
+        [JsonIgnore]
         public virtual Cliente? Cliente { get; set; }
 
         

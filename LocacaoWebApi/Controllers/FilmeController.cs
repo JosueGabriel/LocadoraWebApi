@@ -17,13 +17,13 @@ namespace LocadoraWebApi.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Filme>>> GetFilme()
         {
-            return Ok(await _context.Filmes.Include(l => l.Locacaos).ThenInclude(c => c.Cliente).ToListAsync());
+            return Ok(await _context.Filmes.ToListAsync());
         }
 
         [HttpGet("{id}")]
         public async Task<ActionResult<Filme>> GetFilme(int id)
         {
-            var filme = await _context.Filmes.Include(l => l.Locacaos).ThenInclude(c => c.Cliente).FirstOrDefaultAsync(i => i.Id == id);
+            var filme = await _context.Filmes.FirstOrDefaultAsync(i => i.Id == id);
             return filme == null ? NotFound() : Ok(filme);
         }
 
@@ -63,12 +63,12 @@ namespace LocadoraWebApi.Controllers
             return Ok(await _context.Filmes.ToListAsync());
         }
 
-
+        /*
         [HttpGet]
         [Route("FilmesNuncaAlugados")]
         public async Task<ActionResult<List<Filme>>> GetFilmesNuncaAlugados() 
         { 
-            var filmes = await _context.Filmes.Where(x => x.Locacaos == null).ToListAsync();
+            var filmes = await _context.Filmes.Include(l => l.Locacaos).Where(x => x.Locacaos == null).ToListAsync();
             return filmes == null ? NotFound() : Ok(filmes);
         }
 
@@ -104,5 +104,6 @@ namespace LocadoraWebApi.Controllers
             int weekNum = ciCurr.Calendar.GetWeekOfYear(date, CalendarWeekRule.FirstFourDayWeek, ciCurr.DateTimeFormat.FirstDayOfWeek);
             return weekNum - weekNumStart + 1;
         }
+        */
     }
 }
