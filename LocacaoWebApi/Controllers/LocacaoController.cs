@@ -1,8 +1,9 @@
-﻿using LocacaoWebApi.Models;
+﻿using LocadoraWebApi.Data;
+using LocadoraWebApi.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
-namespace LocacaoWebApi.Controllers
+namespace LocadoraWebApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]

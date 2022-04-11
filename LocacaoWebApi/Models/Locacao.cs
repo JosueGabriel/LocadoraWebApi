@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace LocacaoWebApi.Models
+namespace LocadoraWebApi.Models
 {
     [Table("locacao")]
     public class Locacao

@@ -1,7 +1,7 @@
-﻿using LocacaoWebApi.Models;
+﻿using LocadoraWebApi.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace LocacaoWebApi.Data
+namespace LocadoraWebApi.Data
 {
     public class DataContext : DbContext
     {

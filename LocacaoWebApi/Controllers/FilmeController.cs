@@ -1,9 +1,10 @@
-﻿using LocacaoWebApi.Models;
+﻿using LocadoraWebApi.Data;
+using LocadoraWebApi.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Globalization;
 
-namespace LocacaoWebApi.Controllers
+namespace LocadoraWebApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
@@ -22,7 +23,7 @@ namespace LocacaoWebApi.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Filme>> GetFilme(int id)
         {
-            var filme = await _context.Filmes.FindAsync(id);
+            var filme = await _context.Filmes.Include(l => l.Locacaos).ThenInclude(c => c.Cliente).FirstOrDefaultAsync(i => i.Id == id);
             return filme == null ? NotFound() : Ok(filme);
         }
 
@@ -34,10 +35,10 @@ namespace LocacaoWebApi.Controllers
             return CreatedAtAction("GetFilme", new { id = filme.Id }, filme);
         }
 
-        [HttpPut("{id}")]
-        public async Task<ActionResult<Filme>> PutFilme(int id, Filme putFilme)
+        [HttpPut]
+        public async Task<ActionResult<Filme>> PutFilme(Filme putFilme)
         {
-            var filme = await _context.Filmes.FindAsync(id);
+            var filme = await _context.Filmes.FindAsync(putFilme.Id);
             if (filme == null)
                 return NotFound();
 

@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 
-namespace LocacaoWebApi.Models
+namespace LocadoraWebApi.Models
 {
     [Table("cliente")]
     public class Cliente
@@ -18,7 +18,7 @@ namespace LocacaoWebApi.Models
         public DateTime DataNascimento { get; set; }
 
         [InverseProperty(nameof(Locacao.Cliente))]
-        public virtual ICollection<Locacao>? Locacaos { get; set; }//(x.Filme.Lancamento ? x.DataLocacao.AddDays(2) : x.DataLocacao.AddDays(3)
+        public virtual ICollection<Locacao>? Locacaos { get; set; }
 
     }
 }

@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace LocacaoWebApi.Migrations
+namespace LocadoraWebApi.Migrations
 {
     public partial class Inicial : Migration
     {

@@ -1,10 +1,10 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using LocacaoWebApi.Data;
+using LocadoraWebApi.Data;
 using System.Linq;
-using LocacaoWebApi.Models;
+using LocadoraWebApi.Models;
 
-namespace LocacaoWebApi.Controllers
+namespace LocadoraWebApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
@@ -74,13 +74,13 @@ namespace LocacaoWebApi.Controllers
         }
 
         [HttpGet]
-        [Route("ClientesMaisAlugou")]
-        public async Task<ActionResult<List<Cliente>>> GetClientesMaisAlugou(int colocacao)
+        [Route("SegundoClienteMaisAlugou")]
+        public async Task<ActionResult<List<Cliente>>> GetSegundoClienteMaisAlugou()
         {
             var clientes = await _context.Clientes.OrderBy(x => x.Locacaos.Count).ToListAsync();
 
-            return clientes.ElementAtOrDefault(colocacao) == null ? NotFound() : 
-                CreatedAtAction("GetCliente", new { id = clientes.ElementAtOrDefault(colocacao).Id }, clientes.ElementAtOrDefault(colocacao));
+            return clientes.ElementAtOrDefault(2) == null ? NotFound() : 
+                CreatedAtAction("GetCliente", new { id = clientes.ElementAtOrDefault(2).Id }, clientes.ElementAtOrDefault(2));
         }
     }
 }
