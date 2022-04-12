@@ -72,16 +72,17 @@ namespace LocadoraWebApi.Controllers
                 .Select(x => x.Cliente).Distinct().ToListAsync();
             return clientes == null ? NotFound() : Ok(clientes);
         }
-        /*
+        
         [HttpGet]
         [Route("SegundoClienteMaisAlugou")]
-        public async Task<ActionResult<List<Cliente>>> GetSegundoClienteMaisAlugou()
+        public async Task<ActionResult<Cliente>> GetSegundoClienteMaisAlugou()
         {
-            var clientes = await _context.Clientes.OrderByDescending(x => x.qtdLocacoes()).ToListAsync();
-            //var clientes = await _context.Locacaos.Select(x => x.Cliente).ToListAsync();
-            //var clientes = await _context.Locacaos.ToList().OrderByDescending(x => x.ClienteId.Count).ToListAsync();
-            return clientes.ElementAtOrDefault(2) == null ? NotFound() : 
-                CreatedAtAction("GetCliente", new { id = clientes.ElementAtOrDefault(2).Id }, clientes.ElementAtOrDefault(2));
-        }*/
+            var clientes = await _context.Clientes
+                .OrderByDescending(x => x.Locacaos.Count())
+                .ToListAsync();
+
+            return clientes[1] == null ? NotFound() : 
+                CreatedAtAction("GetCliente", new { id = clientes[1].Id }, clientes[1]);
+        }
     }
 }

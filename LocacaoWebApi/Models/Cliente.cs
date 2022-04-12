@@ -18,7 +18,7 @@ namespace LocadoraWebApi.Models
         public string? CPF { get; set; }
         public DateTime DataNascimento { get; set; }
 
-        [InverseProperty(nameof(Locacao.Cliente))]
+        //[InverseProperty(nameof(Locacao.Cliente))]
         [JsonIgnore]
         public virtual List<Locacao>? Locacaos { get; set; }
 

@@ -15,7 +15,7 @@ namespace LocadoraWebApi.Models
         public int ClassificacaoIndicativa { get; set; }
         public bool Lancamento { get; set; }
 
-        [InverseProperty(nameof(Locacao.Filme))]
+        //[InverseProperty(nameof(Locacao.Filme))]
         [JsonIgnore]
         public virtual List<Locacao>? Locacaos { get; set; }
     }

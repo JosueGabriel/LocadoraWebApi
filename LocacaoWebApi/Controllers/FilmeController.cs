@@ -62,41 +62,30 @@ namespace LocadoraWebApi.Controllers
 
             return Ok(await _context.Filmes.ToListAsync());
         }
-
-        /*
+        
         [HttpGet]
         [Route("FilmesNuncaAlugados")]
-        public async Task<ActionResult<List<Filme>>> GetFilmesNuncaAlugados() 
-        { 
-            var filmes = await _context.Filmes.Include(l => l.Locacaos).Where(x => x.Locacaos == null).ToListAsync();
-            return filmes == null ? NotFound() : Ok(filmes);
+        public async Task<ActionResult<List<Locacao>>> GetFilmesNuncaAlugados() 
+        {
+            var locacao = await _context.Filmes.Where(f => f.Locacaos.Count() <= 0 ).FirstOrDefaultAsync();
+            return locacao == null ? NotFound() : Ok(locacao);
         }
-
+        
         [HttpGet]
         [Route("Top5Filmes")]
         public async Task<ActionResult<List<Filme>>> GetTop5Filmes()
         {
             var ultimoAno = DateTime.Now.AddYears(-1);
-            var filmes = await _context.Filmes.Include(l => l.Locacaos).OrderBy(x => x.Locacaos.Count)
-                .Select(x => x.Locacaos.Where(x => x.DataLocacao.Year.CompareTo(ultimoAno.Year) == 0))
-                .Take(5).ToListAsync();
+            var filmes = await _context.Filmes
+                .Where(l => l.Locacaos.Where(x => x.DataLocacao.Year.CompareTo(ultimoAno.Year) == 0).Count() > 0)
+                .OrderByDescending(x => x.Locacaos.Count())
+                .Take(5)
+                .ToListAsync();
 
             return filmes == null ? NotFound() : Ok(filmes);
         }
 
-        [HttpGet]
-        [Route("Top3FilmesMenos")]
-        public async Task<ActionResult<List<Filme>>> GetTop3FilmesMenos()
-        {
-            var ultimoSemana = DateTime.Now.AddDays(-7);
-            var filmes = await _context.Filmes.Include(l => l.Locacaos).OrderByDescending(x => x.Locacaos.Count)
-                .Select(x => x.Locacaos.Where(x => GetWeekInMonth(x.DataLocacao) == GetWeekInMonth(ultimoSemana)))
-                .Take(3).ToListAsync();
-
-            return filmes == null ? NotFound() : Ok(filmes);
-        }
-
-        public static int GetWeekInMonth(DateTime date)
+        /*public int GetWeekInMonth(DateTime date)
         {
             DateTime tempdate = date.AddDays(-date.Day + 1);
             CultureInfo ciCurr = CultureInfo.CurrentCulture;
@@ -104,6 +93,21 @@ namespace LocadoraWebApi.Controllers
             int weekNum = ciCurr.Calendar.GetWeekOfYear(date, CalendarWeekRule.FirstFourDayWeek, ciCurr.DateTimeFormat.FirstDayOfWeek);
             return weekNum - weekNumStart + 1;
         }
-        */
+
+        [HttpGet]
+        [Route("Top3FilmesMenos")]
+        public async Task<ActionResult<List<Filme>>> GetTop3FilmesMenos()
+        {
+            var ultimoSemana = DateTime.Now.AddDays(-7);
+            var filmes = await _context.Filmes
+                .Where(l => l.Locacaos.AsEnumerable().Where(x => x.FilmeId == l.Id && GetWeekInMonth(x.DataLocacao) == GetWeekInMonth(ultimoSemana)).Count() > 0)
+                .OrderBy(x => x.Locacaos.Count())
+                .Take(3)
+                .ToListAsync();
+           
+
+            return filmes == null ? NotFound() : Ok(filmes);
+        }*/
+        
     }
 }
