@@ -77,7 +77,8 @@ namespace LocadoraWebApi.Controllers
         [Route("SegundoClienteMaisAlugou")]
         public async Task<ActionResult<List<Cliente>>> GetSegundoClienteMaisAlugou()
         {
-            var clientes = await _context.Locacaos.Select(x => x.Cliente).ToListAsync();
+            var clientes = await _context.Clientes.OrderByDescending(x => x.qtdLocacoes()).ToListAsync();
+            //var clientes = await _context.Locacaos.Select(x => x.Cliente).ToListAsync();
             //var clientes = await _context.Locacaos.ToList().OrderByDescending(x => x.ClienteId.Count).ToListAsync();
             return clientes.ElementAtOrDefault(2) == null ? NotFound() : 
                 CreatedAtAction("GetCliente", new { id = clientes.ElementAtOrDefault(2).Id }, clientes.ElementAtOrDefault(2));

@@ -24,6 +24,5 @@ namespace LocadoraWebApi.Models
         [JsonIgnore]
         public virtual Cliente? Cliente { get; set; }
 
-        
     }
 }
