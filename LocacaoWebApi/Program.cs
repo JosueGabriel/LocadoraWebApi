@@ -1,5 +1,6 @@
 global using LocadoraWebApi.Data;
 global using Microsoft.EntityFrameworkCore;
+global using System.Text.Json.Serialization;
 using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);

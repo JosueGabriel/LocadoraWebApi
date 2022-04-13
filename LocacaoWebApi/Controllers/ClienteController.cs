@@ -17,7 +17,7 @@ namespace LocadoraWebApi.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Cliente>>> GetCliente()
         {
-            return Ok(await _context.Clientes.ToListAsync());//.ThenInclude(f => f.Filme).ToListAsync());
+            return Ok(await _context.Clientes.ToListAsync());
         }
 
         [HttpGet("{id}")]
